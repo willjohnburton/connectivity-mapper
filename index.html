@@ -725,19 +725,50 @@
                 </div>
             `;
             
+            // Create dynamic pin color based on services
+            let pinColor = '#FF6B35'; // Default orange
+            let serviceIcons = '';
+            
+            if (pinData.services.voice && pinData.services.data && pinData.services.wifi) {
+                pinColor = '#00C851'; // Green for all services
+                serviceIcons = '📶';
+            } else if (pinData.services.wifi) {
+                pinColor = '#2E7EE5'; // Blue for WiFi
+                serviceIcons = '📶';
+            } else if (pinData.services.data || pinData.services.voice) {
+                pinColor = '#FF8800'; // Orange for cellular
+                serviceIcons = '📱';
+            }
+
             const marker = new google.maps.Marker({
                 position: { lat: pinData.lat, lng: pinData.lng },
                 map: map,
                 title: 'Connectivity Spot',
                 icon: {
                     url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25">
-                            <circle cx="12.5" cy="12.5" r="10" fill="#28a745" stroke="white" stroke-width="2"/>
-                            <text x="12.5" y="17" text-anchor="middle" fill="white" font-size="12" font-family="Arial">📶</text>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="45" height="55" viewBox="0 0 45 55">
+                            <!-- Pin shadow -->
+                            <ellipse cx="22.5" cy="52" rx="8" ry="3" fill="rgba(0,0,0,0.3)"/>
+                            
+                            <!-- Main pin body -->
+                            <path d="M22.5 5 C30.5 5 37 11.5 37 19.5 C37 27.5 22.5 45 22.5 45 C22.5 45 8 27.5 8 19.5 C8 11.5 15.5 5 22.5 5 Z" 
+                                  fill="${pinColor}" stroke="white" stroke-width="3"/>
+                            
+                            <!-- Inner circle -->
+                            <circle cx="22.5" cy="19.5" r="10" fill="white" opacity="0.9"/>
+                            
+                            <!-- Service icon -->
+                            <text x="22.5" y="25" text-anchor="middle" fill="${pinColor}" font-size="16" font-weight="bold" font-family="Arial">${serviceIcons}</text>
+                            
+                            <!-- Pulse animation ring -->
+                            <circle cx="22.5" cy="19.5" r="15" fill="none" stroke="${pinColor}" stroke-width="2" opacity="0.6">
+                                <animate attributeName="r" values="15;20;15" dur="2s" repeatCount="indefinite"/>
+                                <animate attributeName="opacity" values="0.6;0;0.6" dur="2s" repeatCount="indefinite"/>
+                            </circle>
                         </svg>
                     `),
-                    scaledSize: new google.maps.Size(25, 25),
-                    anchor: new google.maps.Point(12, 12)
+                    scaledSize: new google.maps.Size(45, 55),
+                    anchor: new google.maps.Point(22, 50)
                 }
             });
 
